@@ -23,6 +23,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -32,17 +33,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final float DEFAULT_ZOOM = 12;
     private GoogleMap mMap;
     private Button mLocalizeMeButton;
-
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-
     private Boolean mLocationPermissionGranted = false;
-
     private Location mLastKnowLocation;
-
     private FusedLocationProviderClient mFusedLocationProviderClient;
-
     private GeoDataClient mGeoDataClient;
-
     private PlaceDetectionClient mPlaceDetectionClient;
     private LatLng mDefaultLocation;
 
@@ -78,8 +73,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-
     }
 
     private void updateLocationUI() {
@@ -88,12 +81,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         try {
-            if(mLocationPermissionGranted){
-                mMap.setMyLocationEnabled(true);
-                mMap.getUiSettings().setMyLocationButtonEnabled(true);
-            }else {
-                mMap.setMyLocationEnabled(false);
-                mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            if(!mLocationPermissionGranted){
                 mLastKnowLocation = null;
                 getLocationPermission();
             }
@@ -118,6 +106,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     ), DEFAULT_ZOOM
                             )
                             );
+                            mMap.addMarker(new MarkerOptions().position(
+                                    new LatLng(mLastKnowLocation.getLatitude(), mLastKnowLocation.getLongitude())
+                            ).title("C MOI MDR !"));
                         }else {
                             Log.d(TAG, "Current location is null. Using defaults.");
                             Log.e(TAG, "Exception: %s", task.getException());
